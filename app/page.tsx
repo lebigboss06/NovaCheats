@@ -96,6 +96,15 @@ export default function Home() {
           </motion.h1>
 
           <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.34, duration: 0.65 }}
+            className="founder-neon mt-3 text-sm font-semibold tracking-wide sm:text-base"
+          >
+            Fondateur : MiniHack
+          </motion.p>
+
+          <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.38, duration: 0.7 }}
