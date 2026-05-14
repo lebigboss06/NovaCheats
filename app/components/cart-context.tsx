@@ -4,11 +4,19 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Product } from "../data/products";
 
 type CartItem = {
+  key: string;
   slug: string;
   name: string;
-  price: string;
   image: string;
+  duration: string;
+  unitPrice: number;
   quantity: number;
+};
+
+type AddItemOptions = {
+  duration?: string;
+  price?: number;
+  quantity?: number;
 };
 
 type CartContextValue = {
@@ -16,8 +24,8 @@ type CartContextValue = {
   totalItems: number;
   totalPrice: number;
   isOpen: boolean;
-  addItem: (product: Product) => void;
-  removeItem: (slug: string) => void;
+  addItem: (product: Product, options?: AddItemOptions) => void;
+  removeItem: (itemKey: string) => void;
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -27,7 +35,8 @@ const STORAGE_KEY = "novacheats_cart";
 const CartContext = createContext<CartContextValue | null>(null);
 
 function parsePrice(price: string): number {
-  const parsed = Number(price.replace(/[^0-9.]/g, ""));
+  const normalized = price.replace(/\s/g, "").replace("€", "").replace("EUR", "").replace(",", ".");
+  const parsed = Number(normalized.replace(/[^0-9.-]/g, ""));
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
@@ -36,6 +45,36 @@ function formatPrice(price: number): string {
     style: "currency",
     currency: "EUR"
   }).format(price);
+}
+
+function createCartKey(slug: string, duration: string): string {
+  return `${slug}::${duration}`;
+}
+
+function normalizeStoredItem(item: Partial<CartItem> & { price?: string }): CartItem | null {
+  if (!item.slug || !item.name) {
+    return null;
+  }
+
+  const duration = item.duration && item.duration.trim().length > 0 ? item.duration : "Standard";
+  const unitPrice =
+    typeof item.unitPrice === "number"
+      ? item.unitPrice
+      : typeof item.price === "string"
+        ? parsePrice(item.price)
+        : 0;
+
+  const quantity = typeof item.quantity === "number" && item.quantity > 0 ? item.quantity : 1;
+
+  return {
+    key: item.key ?? createCartKey(item.slug, duration),
+    slug: item.slug,
+    name: item.name,
+    image: item.image ?? "",
+    duration,
+    unitPrice,
+    quantity
+  };
 }
 
 function CartPanel({
@@ -51,7 +90,7 @@ function CartPanel({
   totalPrice: number;
   onClose: () => void;
   onClear: () => void;
-  onRemove: (slug: string) => void;
+  onRemove: (itemKey: string) => void;
 }) {
   return (
     <>
@@ -87,15 +126,16 @@ function CartPanel({
             </div>
           ) : (
             items.map((item) => (
-              <div key={item.slug} className="rounded-xl border border-violet-300/25 bg-black/45 p-4">
+              <div key={item.key} className="rounded-xl border border-violet-300/25 bg-black/45 p-4">
                 <p className="font-semibold text-violet-100">{item.name}</p>
-                <p className="mt-1 text-sm text-violet-200/80">{item.price}</p>
+                <p className="mt-1 text-sm text-violet-200/80">{formatPrice(item.unitPrice)}</p>
+                <p className="mt-1 text-xs uppercase tracking-wide text-cyan-200/90">Duree: {item.duration}</p>
                 <div className="mt-3 flex items-center justify-between">
                   <p className="text-sm text-cyan-200">Quantite: {item.quantity}</p>
                   <button
                     type="button"
                     onClick={() => {
-                      onRemove(item.slug);
+                      onRemove(item.key);
                     }}
                     className="rounded-md border border-fuchsia-300/30 bg-fuchsia-500/10 px-3 py-1 text-xs text-fuchsia-100 transition hover:bg-fuchsia-500/20"
                   >
@@ -103,7 +143,7 @@ function CartPanel({
                   </button>
                 </div>
                 <p className="mt-2 text-right text-sm text-violet-200/90">
-                  Total: {formatPrice(parsePrice(item.price) * item.quantity)}
+                  Total: {formatPrice(item.unitPrice * item.quantity)}
                 </p>
               </div>
             ))
@@ -138,8 +178,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (!raw) {
         return [];
       }
-      const parsed = JSON.parse(raw) as CartItem[];
-      return Array.isArray(parsed) ? parsed : [];
+      const parsed = JSON.parse(raw) as Array<Partial<CartItem> & { price?: string }>;
+      if (!Array.isArray(parsed)) {
+        return [];
+      }
+      return parsed.map((item) => normalizeStoredItem(item)).filter((item): item is CartItem => item !== null);
     } catch {
       return [];
     }
@@ -155,40 +198,47 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
-    const totalPrice = items.reduce((acc, item) => acc + parsePrice(item.price) * item.quantity, 0);
+    const totalPrice = items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
 
     return {
       items,
       totalItems,
       totalPrice,
       isOpen,
-      addItem: (product: Product) => {
+      addItem: (product: Product, options?: AddItemOptions) => {
+        const duration = options?.duration ?? "Standard";
+        const unitPrice = options?.price ?? parsePrice(product.price);
+        const quantityToAdd = Math.max(1, Math.floor(options?.quantity ?? 1));
+        const key = createCartKey(product.slug, duration);
+
         setItems((prev) => {
-          const existing = prev.find((item) => item.slug === product.slug);
+          const existing = prev.find((item) => item.key === key);
           if (!existing) {
             return [
               ...prev,
               {
+                key,
                 slug: product.slug,
                 name: product.name,
-                price: product.price,
                 image: product.image,
-                quantity: 1
+                duration,
+                unitPrice,
+                quantity: quantityToAdd
               }
             ];
           }
           return prev.map((item) =>
-            item.slug === product.slug
+            item.key === key
               ? {
                   ...item,
-                  quantity: item.quantity + 1
+                  quantity: item.quantity + quantityToAdd
                 }
               : item
           );
         });
       },
-      removeItem: (slug: string) => {
-        setItems((prev) => prev.filter((item) => item.slug !== slug));
+      removeItem: (itemKey: string) => {
+        setItems((prev) => prev.filter((item) => item.key !== itemKey));
       },
       clearCart: () => {
         setItems([]);

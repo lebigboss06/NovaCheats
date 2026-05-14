@@ -14,9 +14,22 @@ const whyUs = [
   "Interface premium facile a utiliser"
 ];
 
+const subscriptionOptions = [
+  { duration: "1 jour", price: 4.99 },
+  { duration: "1 mois", price: 19.99 },
+  { duration: "3 mois", price: 39.99 },
+  { duration: "Lifetime", price: 79.99 }
+];
+
 export default function ShopPage() {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [selectedDurations, setSelectedDurations] = useState<Record<string, string>>({});
   const { addItem, openCart, totalItems } = useCart();
+
+  const getSelectedSubscription = (slug: string) => {
+    const selectedDuration = selectedDurations[slug] ?? subscriptionOptions[0].duration;
+    return subscriptionOptions.find((option) => option.duration === selectedDuration) ?? subscriptionOptions[0];
+  };
 
   return (
     <main className="gaming-grid shop-surface relative min-h-screen overflow-hidden">
@@ -113,7 +126,7 @@ export default function ShopPage() {
             </div>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-7 md:grid-cols-2">
             {products.map((product, index) => (
               <motion.article
                 key={product.name}
@@ -121,14 +134,14 @@ export default function ShopPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
                 transition={{ duration: 0.45, delay: index * 0.08 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="group neon-border card-pro rounded-2xl bg-black/40 p-5 backdrop-blur-md transition"
+                whileHover={{ y: -10, scale: 1.01 }}
+                className="product-card-premium group neon-border card-pro rounded-3xl bg-black/45 p-4 backdrop-blur-xl transition sm:p-5"
               >
-                <div className="relative mb-4 overflow-hidden rounded-xl">
-                  <div className="aspect-[16/10] w-full">
+                <div className="product-media relative mb-5 overflow-hidden rounded-2xl">
+                  <div className="aspect-[16/9] w-full">
                     {imageErrors[product.name] ? (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-violet-900/70 via-black/80 to-fuchsia-900/55">
-                        <span className="font-[var(--font-orbitron)] text-2xl tracking-wide text-violet-100/95">
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-violet-900/70 via-black/80 to-cyan-900/40">
+                        <span className="font-[var(--font-orbitron)] text-2xl tracking-wide text-violet-100/95 sm:text-3xl">
                           {product.game}
                         </span>
                       </div>
@@ -137,50 +150,96 @@ export default function ShopPage() {
                         src={product.image}
                         alt={`${product.game} preview`}
                         fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover transition duration-700 group-hover:scale-110"
                         onError={() => {
                           setImageErrors((prev) => ({ ...prev, [product.name]: true }));
                         }}
                       />
                     )}
                   </div>
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-violet-950/35 to-transparent" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-violet-900/35 to-transparent" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-violet-500/15 via-transparent to-cyan-400/15 opacity-85" />
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2.5">
                   {product.badges.map((badge) => (
                     <span
                       key={badge}
-                      className="rounded-full border border-violet-300/30 bg-violet-500/15 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-200"
+                      className="premium-badge rounded-full border border-violet-200/30 px-3 py-1 text-[11px] font-semibold tracking-wide text-violet-100"
                     >
                       {badge}
                     </span>
                   ))}
                 </div>
-                <h4 className="mt-4 font-[var(--font-orbitron)] text-xl text-white">{product.name}</h4>
-                <p className="mt-1 text-sm text-fuchsia-200">{product.game}</p>
-                <p className="mt-4 min-h-16 text-violet-100/90">{product.shortDescription}</p>
-                <div className="mt-6 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs text-violet-200/60 line-through">{product.oldPrice}</p>
-                    <span className="text-2xl font-bold text-violet-300">{product.price}</span>
+
+                <h4 className="mt-4 font-[var(--font-orbitron)] text-2xl text-white sm:text-3xl">{product.name}</h4>
+                <p className="mt-1 text-sm uppercase tracking-[0.22em] text-cyan-200/90">{product.game}</p>
+                <p className="mt-4 min-h-16 max-w-xl text-base text-violet-100/90">{product.shortDescription}</p>
+
+                <div className="mt-5">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-violet-200/85">
+                    Choix abonnement
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {subscriptionOptions.map((option) => {
+                      const selectedDuration = selectedDurations[product.slug] ?? subscriptionOptions[0].duration;
+                      const isSelected = option.duration === selectedDuration;
+                      return (
+                        <button
+                          key={`${product.slug}-${option.duration}`}
+                          type="button"
+                          onClick={() => {
+                            setSelectedDurations((prev) => ({
+                              ...prev,
+                              [product.slug]: option.duration
+                            }));
+                          }}
+                          className={`rounded-lg border px-3 py-2 text-left transition ${
+                            isSelected
+                              ? "border-cyan-300/60 bg-cyan-500/20 shadow-[0_0_18px_rgba(56,189,248,0.4)]"
+                              : "border-violet-300/25 bg-black/35 hover:border-violet-300/45 hover:bg-violet-500/12"
+                          }`}
+                        >
+                          <p className="text-sm font-semibold text-violet-100">{option.duration}</p>
+                          <p className="text-xs text-cyan-200">{option.price.toFixed(2)}€</p>
+                        </button>
+                      );
+                    })}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      addItem(product);
-                    }}
-                    className="rounded-lg border border-cyan-300/35 bg-cyan-500/20 px-4 py-2 font-semibold text-white transition hover:bg-gradient-to-r hover:from-violet-500 hover:to-cyan-500"
-                  >
-                    Ajouter
-                  </button>
-                  <Link
-                    href={`/shop/${product.slug}`}
-                    className="rounded-lg border border-violet-300/35 bg-violet-500/20 px-4 py-2 font-semibold text-white transition group-hover:bg-gradient-to-r group-hover:from-violet-500 group-hover:to-cyan-500 group-hover:shadow-[0_0_18px_rgba(56,189,248,0.5)]"
-                  >
-                    Voir detail
-                  </Link>
+                </div>
+
+                <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="price-card rounded-2xl border border-violet-300/25 bg-black/45 px-4 py-3">
+                    <p className="text-sm text-violet-200/60 line-through">
+                      {(getSelectedSubscription(product.slug).price + 20).toFixed(2)}€
+                    </p>
+                    <span className="text-3xl font-extrabold text-violet-200 sm:text-4xl">
+                      {getSelectedSubscription(product.slug).price.toFixed(2)}€
+                    </span>
+                  </div>
+
+                  <div className="flex w-full flex-col gap-2 sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const selectedSubscription = getSelectedSubscription(product.slug);
+                        addItem(product, {
+                          duration: selectedSubscription.duration,
+                          price: selectedSubscription.price
+                        });
+                      }}
+                      className="buy-now-btn rounded-xl px-6 py-3 text-base font-bold text-white sm:min-w-56"
+                    >
+                      Acheter maintenant
+                    </button>
+                    <Link
+                      href={`/shop/${product.slug}`}
+                      className="rounded-xl border border-violet-300/35 bg-violet-500/15 px-4 py-2 text-center font-semibold text-violet-100 transition hover:bg-violet-500/25"
+                    >
+                      Voir detail produit
+                    </Link>
+                  </div>
                 </div>
               </motion.article>
             ))}

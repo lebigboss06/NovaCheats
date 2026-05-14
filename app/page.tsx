@@ -71,6 +71,17 @@ export default function Home() {
         />
       ))}
 
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative z-10 mx-auto w-full max-w-7xl px-5 pt-8 text-center sm:pt-10"
+      >
+        <h1 className="mini-hack-top font-[var(--font-orbitron)] text-6xl leading-none sm:text-7xl md:text-8xl lg:text-9xl">
+          Mini Hack
+        </h1>
+      </motion.div>
+
       <div className="relative z-10 mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-5 py-12 md:grid-cols-2 md:py-16">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
@@ -101,7 +112,7 @@ export default function Home() {
             transition={{ delay: 0.34, duration: 0.65 }}
             className="founder-neon mt-3 text-sm font-semibold tracking-wide sm:text-base"
           >
-            Fondateur : Mini Hack
+            Fondateur : MiniHack
           </motion.p>
 
           <motion.p
