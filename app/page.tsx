@@ -101,7 +101,7 @@ export default function Home() {
             transition={{ delay: 0.34, duration: 0.65 }}
             className="founder-neon mt-3 text-sm font-semibold tracking-wide sm:text-base"
           >
-            Fondateur : MiniHack
+            Fondateur : Mini Hack
           </motion.p>
 
           <motion.p
