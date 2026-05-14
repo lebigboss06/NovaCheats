@@ -265,6 +265,23 @@ body {
     0 0 24px rgba(124, 58, 237, 0.2);
 }
 
+.subscription-card {
+  box-shadow:
+    0 0 0 1px rgba(196, 181, 253, 0.05) inset,
+    0 0 18px rgba(124, 58, 237, 0.14);
+}
+
+.subscription-card:hover {
+  transform: translateY(-1px);
+}
+
+.subscription-card-selected {
+  box-shadow:
+    0 0 0 1px rgba(216, 180, 254, 0.2) inset,
+    0 0 24px rgba(168, 85, 247, 0.46),
+    0 0 18px rgba(56, 189, 248, 0.24);
+}
+
 .delivery-panel {
   border: 1px solid rgba(56, 189, 248, 0.28);
   background:

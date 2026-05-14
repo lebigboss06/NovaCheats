@@ -69,10 +69,10 @@ const benefitCards = [
 ];
 
 const subscriptionOptions = [
-  { duration: "1 jour", price: 4.99 },
-  { duration: "1 mois", price: 19.99 },
-  { duration: "3 mois", price: 39.99 },
-  { duration: "Lifetime", price: 79.99 }
+  { duration: "1 jour", price: 3.0 },
+  { duration: "7 jours", price: 10.0 },
+  { duration: "30 jours", price: 16.0 },
+  { duration: "Vie", price: 45.0 }
 ];
 
 function StarRow() {
@@ -92,6 +92,7 @@ export default function ProductDetailPage() {
   const product = products.find((item) => item.slug === params.slug);
   const { addItem, openCart, totalItems } = useCart();
   const [selectedDuration, setSelectedDuration] = useState(subscriptionOptions[0].duration);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const selectedSubscription = useMemo(
     () => subscriptionOptions.find((option) => option.duration === selectedDuration) ?? subscriptionOptions[0],
@@ -187,9 +188,9 @@ export default function ProductDetailPage() {
 
             <div className="mt-6">
               <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-violet-200/85">
-                Choix d&apos;abonnement
+                Variante selectionnee
               </p>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3">
                 {subscriptionOptions.map((option) => {
                   const isSelected = option.duration === selectedDuration;
                   return (
@@ -199,14 +200,32 @@ export default function ProductDetailPage() {
                       onClick={() => {
                         setSelectedDuration(option.duration);
                       }}
-                      className={`rounded-xl border px-4 py-3 text-left transition ${
+                      className={`subscription-card rounded-xl border px-4 py-3 text-left transition ${
                         isSelected
-                          ? "border-cyan-300/60 bg-cyan-500/20 shadow-[0_0_24px_rgba(56,189,248,0.45)]"
+                          ? "subscription-card-selected border-violet-300/70 bg-violet-500/20"
                           : "border-violet-300/25 bg-black/35 hover:border-violet-300/50 hover:bg-violet-500/15"
                       }`}
                     >
-                      <p className="font-semibold text-violet-100">{option.duration}</p>
-                      <p className="text-sm text-cyan-200">{option.price.toFixed(2)}€</p>
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="font-semibold text-violet-100">{option.duration}</p>
+                          <p className="text-xs font-medium text-violet-200/90">
+                            En stock <span className="text-emerald-300">Disponible</span>
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <p className="text-base font-bold text-violet-200">{option.price.toFixed(2)} €</p>
+                          <span
+                            className={`inline-flex h-6 w-6 items-center justify-center rounded-full border text-xs ${
+                              isSelected
+                                ? "border-violet-200 bg-violet-300/20 text-violet-100"
+                                : "border-violet-300/35 text-transparent"
+                            }`}
+                          >
+                            ✓
+                          </span>
+                        </div>
+                      </div>
                     </button>
                   );
                 })}
@@ -221,24 +240,54 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="flex w-full flex-col gap-2 sm:w-auto">
+                <div className="inline-flex items-center justify-between rounded-xl border border-violet-300/30 bg-black/40 p-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedQuantity((prev) => Math.max(1, prev - 1));
+                    }}
+                    className="h-9 w-9 rounded-lg border border-violet-300/30 bg-violet-500/15 text-lg font-bold text-violet-100 transition hover:bg-violet-500/30"
+                  >
+                    -
+                  </button>
+                  <span className="px-4 text-sm font-semibold text-violet-100">Quantite: {selectedQuantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedQuantity((prev) => Math.min(99, prev + 1));
+                    }}
+                    className="h-9 w-9 rounded-lg border border-violet-300/30 bg-violet-500/15 text-lg font-bold text-violet-100 transition hover:bg-violet-500/30"
+                  >
+                    +
+                  </button>
+                </div>
+
                 <button
                   type="button"
                   onClick={() => {
-                    addItem(product, { duration: selectedSubscription.duration, price: selectedSubscription.price });
-                    openCart();
-                  }}
-                  className="detail-buy-btn rounded-xl px-7 py-3.5 text-base font-bold text-white sm:min-w-60"
-                >
-                  Acheter maintenant
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    addItem(product, { duration: selectedSubscription.duration, price: selectedSubscription.price });
+                    addItem(product, {
+                      duration: selectedSubscription.duration,
+                      price: selectedSubscription.price,
+                      quantity: selectedQuantity
+                    });
                   }}
                   className="rounded-xl border border-violet-300/35 bg-violet-500/15 px-6 py-2.5 font-semibold text-violet-100 transition hover:bg-violet-500/25"
                 >
                   Ajouter au panier
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    addItem(product, {
+                      duration: selectedSubscription.duration,
+                      price: selectedSubscription.price,
+                      quantity: selectedQuantity
+                    });
+                    openCart();
+                  }}
+                  className="detail-buy-btn rounded-xl px-7 py-3.5 text-base font-bold text-white sm:min-w-60"
+                >
+                  Acheter maintenant ⚡
                 </button>
               </div>
             </div>
