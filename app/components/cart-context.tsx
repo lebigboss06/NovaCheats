@@ -92,6 +92,38 @@ function CartPanel({
   onClear: () => void;
   onRemove: (itemKey: string) => void;
 }) {
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  const handleCheckout = async () => {
+    if (items.length === 0 || isCheckoutLoading) {
+      return;
+    }
+
+    setCheckoutError(null);
+    setIsCheckoutLoading(true);
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ items })
+      });
+
+      const payload = (await response.json()) as { url?: string; error?: string };
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error ?? "Impossible de lancer le paiement.");
+      }
+
+      window.location.href = payload.url;
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Erreur inconnue lors du paiement.");
+      setIsCheckoutLoading(false);
+    }
+  };
+
   return (
     <>
       {isOpen ? (
@@ -157,11 +189,22 @@ function CartPanel({
           </div>
           <button
             type="button"
+            onClick={() => {
+              void handleCheckout();
+            }}
+            disabled={items.length === 0 || isCheckoutLoading}
+            className="mb-3 w-full rounded-lg border border-cyan-300/35 bg-cyan-500/20 px-4 py-2.5 font-semibold text-cyan-50 transition hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-55"
+          >
+            {isCheckoutLoading ? "Redirection..." : "Payer maintenant"}
+          </button>
+          <button
+            type="button"
             onClick={onClear}
             className="w-full rounded-lg border border-violet-300/30 bg-violet-500/15 px-4 py-2.5 font-semibold text-violet-100 transition hover:bg-violet-500/25"
           >
             Vider le panier
           </button>
+          {checkoutError ? <p className="mt-2 text-xs text-fuchsia-200">{checkoutError}</p> : null}
         </div>
       </aside>
     </>
