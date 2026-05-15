@@ -82,7 +82,7 @@ const productShowcaseImages: Record<string, { src: string; alt: string }> = {
     alt: "BO7 extra visual"
   },
   "fortnite-ghost-pro": {
-    src: "/fortnite.jpg",
+    src: "/ee65b947-2e24-4e89-93ba-9ea2de9acffe.jpg",
     alt: "Fortnite extra visual"
   }
 };
