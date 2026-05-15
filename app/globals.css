@@ -272,6 +272,15 @@ body {
     0 0 20px rgba(56, 189, 248, 0.2);
 }
 
+.bo7-shadow-title {
+  color: rgba(245, 243, 255, 0.98);
+  text-shadow:
+    0 0 14px rgba(168, 85, 247, 0.8),
+    0 0 32px rgba(56, 189, 248, 0.5),
+    0 0 58px rgba(124, 58, 237, 0.48);
+  animation: bo7TitleGlow 3.1s ease-in-out infinite;
+}
+
 .subscription-card {
   box-shadow:
     0 0 0 1px rgba(196, 181, 253, 0.05) inset,
@@ -388,5 +397,25 @@ body {
   50% {
     opacity: 0.62;
     transform: scale(1.08) translateY(-6px);
+  }
+}
+
+@keyframes bo7TitleGlow {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: translateY(0);
+    text-shadow:
+      0 0 12px rgba(168, 85, 247, 0.7),
+      0 0 26px rgba(56, 189, 248, 0.42),
+      0 0 46px rgba(124, 58, 237, 0.4);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+    text-shadow:
+      0 0 16px rgba(192, 132, 252, 0.92),
+      0 0 38px rgba(56, 189, 248, 0.62),
+      0 0 62px rgba(124, 58, 237, 0.56);
   }
 }

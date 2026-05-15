@@ -151,16 +151,27 @@ export default function ProductDetailPage() {
             </div>
 
             {product.slug === "bo7-elite-pack" ? (
-              <div className="bo7-extra-shot neon-border relative mt-4 overflow-hidden rounded-2xl bg-black/45 p-2">
-                <div className="relative aspect-[16/7] overflow-hidden rounded-xl">
-                  <Image
-                    src={bo7ShowcaseImage}
-                    alt="BO7 extra visual"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition duration-500 hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-900/35 via-transparent to-cyan-500/20" />
+              <div className="mt-4">
+                <div className="bo7-extra-shot neon-border relative overflow-hidden rounded-2xl bg-black/45 p-2">
+                  <div className="relative aspect-[16/7] overflow-hidden rounded-xl">
+                    <Image
+                      src={bo7ShowcaseImage}
+                      alt="BO7 extra visual"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition duration-500 hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-violet-900/35 via-transparent to-cyan-500/20" />
+                  </div>
+                </div>
+
+                <div className="mt-5 text-center">
+                  <h2 className="bo7-shadow-title font-[var(--font-orbitron)] text-3xl font-bold sm:text-4xl lg:text-5xl">
+                    Indetectable Shadow Impossible
+                  </h2>
+                  <p className="mt-3 text-sm text-violet-100/85 sm:text-base">
+                    Technologie furtive avancee, optimisee pour rester discrete et stable.
+                  </p>
                 </div>
               </div>
             ) : null}
