@@ -76,6 +76,16 @@ const subscriptionOptions = [
 ];
 
 const bo7ShowcaseImage = "/Capture d’écran 2026-05-15 015514.png";
+const productShowcaseImages: Record<string, { src: string; alt: string }> = {
+  "bo7-elite-pack": {
+    src: bo7ShowcaseImage,
+    alt: "BO7 extra visual"
+  },
+  "fortnite-ghost-pro": {
+    src: "/fortnite.jpg",
+    alt: "Fortnite extra visual"
+  }
+};
 
 function StarRow() {
   return (
@@ -150,13 +160,13 @@ export default function ProductDetailPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-violet-950/35 to-transparent" />
             </div>
 
-            {product.slug === "bo7-elite-pack" ? (
+            {productShowcaseImages[product.slug] ? (
               <div className="mt-4">
                 <div className="bo7-extra-shot neon-border relative overflow-hidden rounded-2xl bg-black/45 p-2">
                   <div className="relative aspect-[16/7] overflow-hidden rounded-xl">
                     <Image
-                      src={bo7ShowcaseImage}
-                      alt="BO7 extra visual"
+                      src={productShowcaseImages[product.slug].src}
+                      alt={productShowcaseImages[product.slug].alt}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover transition duration-500 hover:scale-105"
@@ -165,14 +175,16 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 text-center">
-                  <h2 className="bo7-shadow-title font-[var(--font-orbitron)] text-3xl font-bold sm:text-4xl lg:text-5xl">
-                    Indetectable Shadow Impossible
-                  </h2>
-                  <p className="mt-3 text-sm text-violet-100/85 sm:text-base">
-                    Technologie furtive avancee, optimisee pour rester discrete et stable.
-                  </p>
-                </div>
+                {product.slug === "bo7-elite-pack" ? (
+                  <div className="mt-5 text-center">
+                    <h2 className="bo7-shadow-title font-[var(--font-orbitron)] text-3xl font-bold sm:text-4xl lg:text-5xl">
+                      Indetectable Shadow Impossible
+                    </h2>
+                    <p className="mt-3 text-sm text-violet-100/85 sm:text-base">
+                      Technologie furtive avancee, optimisee pour rester discrete et stable.
+                    </p>
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </motion.div>
