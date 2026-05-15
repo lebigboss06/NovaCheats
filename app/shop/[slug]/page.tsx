@@ -69,10 +69,11 @@ const benefitCards = [
 ];
 
 const subscriptionOptions = [
-  { duration: "1 jour", price: 3.0 },
-  { duration: "7 jours", price: 10.0 },
-  { duration: "30 jours", price: 16.0 },
-  { duration: "Vie", price: 45.0 }
+  { duration: "1 jour", price: 5.0 },
+  { duration: "7 jours", price: 15.0 },
+  { duration: "30 jours", price: 22.0 },
+  { duration: "3 mois", price: 35.0 },
+  { duration: "Lifetime", price: 39.99 }
 ];
 
 const bo7ShowcaseImage = "/Capture d’écran 2026-05-15 015514.png";

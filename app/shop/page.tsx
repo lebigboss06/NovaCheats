@@ -15,10 +15,11 @@ const whyUs = [
 ];
 
 const subscriptionOptions = [
-  { duration: "1 jour", price: 4.99 },
-  { duration: "1 mois", price: 19.99 },
-  { duration: "3 mois", price: 39.99 },
-  { duration: "Lifetime", price: 79.99 }
+  { duration: "1 jour", price: 5.0 },
+  { duration: "7 jours", price: 15.0 },
+  { duration: "30 jours", price: 22.0 },
+  { duration: "3 mois", price: 35.0 },
+  { duration: "Lifetime", price: 39.99 }
 ];
 
 export default function ShopPage() {
