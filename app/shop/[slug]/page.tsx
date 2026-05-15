@@ -75,6 +75,8 @@ const subscriptionOptions = [
   { duration: "Vie", price: 45.0 }
 ];
 
+const bo7ShowcaseImage = "/Capture d’écran 2026-05-15 015514.png";
+
 function StarRow() {
   return (
     <div className="flex items-center gap-1 text-cyan-200">
@@ -147,6 +149,21 @@ export default function ProductDetailPage() {
               <Image src={product.image} alt={product.name} fill className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-violet-950/35 to-transparent" />
             </div>
+
+            {product.slug === "bo7-elite-pack" ? (
+              <div className="bo7-extra-shot neon-border relative mt-4 overflow-hidden rounded-2xl bg-black/45 p-2">
+                <div className="relative aspect-[16/7] overflow-hidden rounded-xl">
+                  <Image
+                    src={bo7ShowcaseImage}
+                    alt="BO7 extra visual"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition duration-500 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-900/35 via-transparent to-cyan-500/20" />
+                </div>
+              </div>
+            ) : null}
           </motion.div>
 
           <motion.div

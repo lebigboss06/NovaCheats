@@ -265,6 +265,13 @@ body {
     0 0 24px rgba(124, 58, 237, 0.2);
 }
 
+.bo7-extra-shot {
+  box-shadow:
+    0 0 0 1px rgba(196, 181, 253, 0.1) inset,
+    0 0 24px rgba(124, 58, 237, 0.24),
+    0 0 20px rgba(56, 189, 248, 0.2);
+}
+
 .subscription-card {
   box-shadow:
     0 0 0 1px rgba(196, 181, 253, 0.05) inset,
